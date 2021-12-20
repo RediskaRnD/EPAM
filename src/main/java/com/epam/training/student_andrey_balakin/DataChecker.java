@@ -36,18 +36,20 @@ public class DataChecker {
         var listSize = list.size();
         if (listSize != itemsFromUI.size()) return true;
 
-        var map = new HashMap<Long, Integer>(listSize);
+        var map = new HashMap<Item, Integer>(listSize);
         for (var item : list) {
-            var count = map.putIfAbsent(item.itemId, 1);
-            if (count != null) map.put(item.itemId, count + 1);
+            var count = map.putIfAbsent(item, 1);
+            if (count != null) map.put(item, count + 1);
         }
         for (var item : itemsFromUI) {
-            var count = map.get(item.itemId);
+            var count = map.get(item);
             if (count == null || count < 1) return true;
-            map.put(item.itemId, count - 1);
+            map.put(item, count - 1);
         }
         return false;
     }
+
+
 
     // naive method for exploring the problem space
     public boolean isDataChanged3 (List<Item> itemsFromUI) {
