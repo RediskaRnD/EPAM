@@ -1,7 +1,6 @@
 package com.epam.training.student_andrey_balakin;
 
 import lombok.val;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
@@ -25,7 +24,8 @@ public class Git {
         System.out.println(getCommonParent(left, right));
     }
 
-    public static @Nullable Integer getCommonParent (@NotNull List<Integer> left, @NotNull List<Integer> right) {
+    public static @Nullable Integer getCommonParent (List<Integer> left, List<Integer> right) {
+        if (left == null || left.isEmpty() || right == null || right.isEmpty()) return null;
         val itLeft   = left.iterator();
         val itRight  = right.iterator();
         val setLeft  = new HashSet<Integer>();
