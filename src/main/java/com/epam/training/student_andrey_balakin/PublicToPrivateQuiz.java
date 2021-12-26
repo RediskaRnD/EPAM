@@ -6,12 +6,12 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 
 public class PublicToPrivateQuiz {
-    private static boolean isValidAccessLevel (String accessLevel) {
+    private static boolean isAccessLevelWrong (String accessLevel) {
         val validList = new String[] {"public", "protected", "", "private"};
         for (val level : validList) {
-            if (level.equals(accessLevel)) return true;
+            if (level.equals(accessLevel)) return false;
         }
-        return false;
+        return true;
     }
 
     /**
@@ -25,15 +25,15 @@ public class PublicToPrivateQuiz {
     public static @NotNull String changeClassFieldsAndMethodsAccessLevel (String input, String changeFrom, String changeTo)
             throws PublicToPrivateQuizException {
         if (input == null) throw new PublicToPrivateQuizException("Parameter input is wrong: null");
-        if (!isValidAccessLevel(changeFrom) || changeFrom.isEmpty()) {
+        if (isAccessLevelWrong(changeFrom) || changeFrom.isEmpty()) {
             throw new PublicToPrivateQuizException("Parameter changeFrom is wrong: " + changeFrom);
         }
-        if (!isValidAccessLevel(changeTo)) {
+        if (isAccessLevelWrong(changeTo)) {
             throw new PublicToPrivateQuizException("Parameter changeTo is wrong: " + changeTo);
         }
 
         val classIdx = input.indexOf("class");
-//        if (classIdx < 0) return input;
+        if (classIdx < 0) return input;
 
         var curlyBracesLevel = 0;
         var wasEscapeSymbol  = false;
@@ -44,14 +44,16 @@ public class PublicToPrivateQuiz {
 
         val words    = new ArrayList<Integer>();
         val inputLen = input.length();
-        int i        = 0;
+        int i        = 1;
         val FROM_LEN = changeFrom.length();
         while (true) {
             val wordIdx = input.indexOf(changeFrom, i);
             if (wordIdx < 0) break;
+            val charBefore = input.charAt(wordIdx - 1);
             i = wordIdx + FROM_LEN;
             if (i + 1 >= inputLen) break;
-            if (Character.isWhitespace(input.charAt(i)) || input.charAt(i) == '/') {
+            if ((("{};/".indexOf(charBefore) >= 0) || Character.isWhitespace(charBefore))
+                    && (input.charAt(i) == '/') || Character.isWhitespace(input.charAt(i))) {
                 words.add(wordIdx);
             }
         }
@@ -145,7 +147,7 @@ public class PublicToPrivateQuiz {
         if (curlyBracesLevel != 0) throw new PublicToPrivateQuizException("Invalid java code: curly braces.");
         if (inChar) throw new PublicToPrivateQuizException("Invalid java code: char is not finished.");
         if (inString) throw new PublicToPrivateQuizException("Invalid java code: String is not finished.");
-        if (inBigComment) throw new PublicToPrivateQuizException("Invalid java code: comment is not closed \\*...");
+        if (inBigComment) throw new PublicToPrivateQuizException("Invalid java code: comment is not closed /*...");
         var idx    = 0;
         val result = new StringBuilder();
         for (val wIdx : words) {
