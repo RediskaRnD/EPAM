@@ -108,7 +108,7 @@ public class PublicToPrivateQuiz {
                         if (!wasEscapeSymbol) {
                             if (input.startsWith("\"\"\"", i - 2)) {
                                 inBigString = !inBigString;
-                                System.out.println(inString ? "+BigString" : "-BigString");
+                                System.out.println(inBigString ? "+BigString" : "-BigString");
                             } else {
                                 if (!inBigString) {
                                     inString = !inString;
