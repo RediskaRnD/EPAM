@@ -6,14 +6,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 
 public class PublicToPrivateQuiz {
-    private static boolean isAccessLevelWrong (String accessLevel) {
-        val validList = new String[] {"public", "protected", "", "private"};
-        for (val level : validList) {
-            if (level.equals(accessLevel)) return false;
-        }
-        return true;
-    }
-
     /**
      * @param input      String (*.java)
      * @param changeFrom ("public", "protected", "private")
@@ -154,5 +146,13 @@ public class PublicToPrivateQuiz {
         }
         result.append(input, idx, inputLen);
         return result.toString();
+    }
+
+    private static boolean isAccessLevelWrong (String accessLevel) {
+        val validList = new String[] {"public", "protected", "", "private"};
+        for (val level : validList) {
+            if (level.equals(accessLevel)) return false;
+        }
+        return true;
     }
 }
