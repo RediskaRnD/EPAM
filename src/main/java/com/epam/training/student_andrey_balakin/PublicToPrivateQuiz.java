@@ -20,7 +20,7 @@ public class PublicToPrivateQuiz {
      * @param changeTo   ("public", "protected", "", "private")
      * @return String
      * @throws PublicToPrivateQuizException 1. input is null or incorrect Java file.
-     *                                2. changeTo or changeFrom is wrong.
+     *                                      2. changeTo or changeFrom is wrong.
      */
     public static @NotNull String changeClassFieldsAndMethodsAccessLevel (String input, String changeFrom, String changeTo)
             throws PublicToPrivateQuizException {
@@ -28,10 +28,12 @@ public class PublicToPrivateQuiz {
         if (!isValidAccessLevel(changeFrom) || changeFrom.isEmpty()) {
             throw new PublicToPrivateQuizException("Parameter changeFrom is wrong: " + changeFrom);
         }
-        if (!isValidAccessLevel(changeTo)) throw new PublicToPrivateQuizException("Parameter changeTo is wrong: " + changeTo);
+        if (!isValidAccessLevel(changeTo)) {
+            throw new PublicToPrivateQuizException("Parameter changeTo is wrong: " + changeTo);
+        }
 
         val classIdx = input.indexOf("class");
-        if (classIdx < 0) return input;
+//        if (classIdx < 0) return input;
 
         var curlyBracesLevel = 0;
         var wasEscapeSymbol  = false;
@@ -44,11 +46,14 @@ public class PublicToPrivateQuiz {
         val inputLen = input.length();
         int i        = 0;
         val FROM_LEN = changeFrom.length();
-        while (i < inputLen) {
-            val publicIndex = input.indexOf(changeFrom, i);
-            if (publicIndex < 0) break;
-            words.add(publicIndex);
-            i = publicIndex + FROM_LEN;
+        while (true) {
+            val wordIdx = input.indexOf(changeFrom, i);
+            if (wordIdx < 0) break;
+            i = wordIdx + FROM_LEN;
+            if (i + 1 >= inputLen) break;
+            if (Character.isWhitespace(input.charAt(i)) || input.charAt(i) == '/') {
+                words.add(wordIdx);
+            }
         }
         if (words.isEmpty()) return input;
 
@@ -56,7 +61,7 @@ public class PublicToPrivateQuiz {
         var line         = 1;
         val it           = words.iterator();
         var wordIdx      = it.next();
-        var symbolBefore = '\0';
+        var symbolBefore = 0;
         for (val c : input.chars().toArray()) {
             if (i == wordIdx) {
                 if (curlyBracesLevel != 1 || inComment || inBigComment || inString || inChar) {
@@ -129,7 +134,7 @@ public class PublicToPrivateQuiz {
                     }
                 }
             }
-            symbolBefore = (char) c;
+            symbolBefore = c;
             if (escaped) {
                 wasEscapeSymbol = false;
             }
