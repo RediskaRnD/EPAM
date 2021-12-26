@@ -31,6 +31,7 @@ public class PublicToPrivateQuiz {
         var wasEscapeSymbol  = false;
         var inChar           = false;
         var inString         = false;
+        var inBigString      = false;
         var inComment        = false;
         var inBigComment     = false;
 
@@ -58,7 +59,7 @@ public class PublicToPrivateQuiz {
         var symbolBefore = 0;
         for (val c : input.chars().toArray()) {
             if (i == wordIdx) {
-                if (curlyBracesLevel != 1 || inComment || inBigComment || inString || inChar) {
+                if (curlyBracesLevel != 1 || inComment || inBigComment || inBigString || inString || inChar) {
                     it.remove();
                 }
                 if (it.hasNext()) wordIdx = it.next();
@@ -105,8 +106,15 @@ public class PublicToPrivateQuiz {
                 case '"' -> {
                     if (!(inBigComment || inComment || inChar)) {
                         if (!wasEscapeSymbol) {
-                            inString = !inString;
-                            System.out.println(inString ? "+String" : "-String");
+                            if (input.startsWith("\"\"\"", i - 2)) {
+                                inBigString = !inBigString;
+                                System.out.println(inString ? "+BigString" : "-BigString");
+                            } else {
+                                if (!inBigString) {
+                                    inString = !inString;
+                                    System.out.println(inString ? "+String" : "-String");
+                                }
+                            }
                         }
                     }
                 }
@@ -138,6 +146,7 @@ public class PublicToPrivateQuiz {
         if (inChar) throw new PublicToPrivateQuizException("Invalid java code: char is not finished.");
         if (inString) throw new PublicToPrivateQuizException("Invalid java code: String is not finished.");
         if (inBigComment) throw new PublicToPrivateQuizException("Invalid java code: comment is not closed /*...");
+
         var idx    = 0;
         val result = new StringBuilder();
         for (val wIdx : words) {
