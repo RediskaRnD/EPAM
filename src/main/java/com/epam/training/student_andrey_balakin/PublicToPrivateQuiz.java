@@ -118,9 +118,7 @@ public class PublicToPrivateQuiz {
                         }
                     }
                 }
-                case '\\' -> {
-                    wasEscapeSymbol = true;
-                }
+                case '\\' -> wasEscapeSymbol = true;
                 case '\'' -> {
                     if (!(inBigComment || inComment || inString)) {
                         if (!wasEscapeSymbol) {
