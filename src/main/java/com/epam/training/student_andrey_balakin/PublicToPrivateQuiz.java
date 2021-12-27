@@ -106,7 +106,7 @@ public class PublicToPrivateQuiz {
                 case '"' -> {
                     if (!(inBigComment || inComment || inChar)) {
                         if (!wasEscapeSymbol) {
-                            if (input.startsWith("\"\"\"", i - 2)) {
+                            if (input.startsWith("\"\"\"", i)) {
                                 inBigString = !inBigString;
                                 System.out.println(inBigString ? "+BigString" : "-BigString");
                             } else {
@@ -118,7 +118,6 @@ public class PublicToPrivateQuiz {
                         }
                     }
                 }
-                case '\\' -> wasEscapeSymbol = true;
                 case '\'' -> {
                     if (!(inBigComment || inComment || inString)) {
                         if (!wasEscapeSymbol) {
@@ -133,6 +132,7 @@ public class PublicToPrivateQuiz {
                         inComment = false;
                     }
                 }
+                case '\\' -> wasEscapeSymbol = true;
             }
             symbolBefore = c;
             if (escaped) {
